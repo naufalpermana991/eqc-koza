@@ -1,0 +1,38 @@
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <a href="{{__MAIN_ROUTE__}}/create" class="btn btn-sm btn-primary">
+                    <i data-feather="plus"></i> Add new data
+                </a>
+
+                <br /><br />
+                <div class="table-responsive">
+                    <table class="table table-condensed table-hover mb-0" id="myTable">
+                        <thead>
+                            <tr>
+                                {{__TABLE_ROW__}}
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div> 
+        </div>
+    </div>
+</div>
+
+@section('custom-script')
+<script>
+    $(function() {
+        $('#myTable').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: '{{__AJAX_URL__}}',
+            columns: {{__TABLE_COLUMNS__}},
+            order: [
+                [1, 'asc']
+            ]
+        });
+    });
+</script>
+@endsection

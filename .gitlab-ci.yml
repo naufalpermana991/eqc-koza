@@ -1,0 +1,12 @@
+stages:
+  - build
+
+build:
+  stage: build
+  only:
+    - master
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" registry.kawan.cloud
+  script:
+    - docker build -t registry.kawan.cloud/pdam/digi-pdam:$CI_COMMIT_BRANCH .
+    - docker push registry.kawan.cloud/pdam/digi-pdam:$CI_COMMIT_BRANCH

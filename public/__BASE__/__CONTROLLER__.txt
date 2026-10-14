@@ -1,0 +1,117 @@
+<?php
+
+namespace {{__NAMESPACE__}}
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
+use {{__MODEL_PATH__}}
+use Illuminate\Support\Str;
+
+class {{__CONTROLLER_NAME__}} extends Controller
+{
+
+	public function index(Request $request)
+	{
+		/**
+		 * Call datatables
+		 * */
+		if($request->ajax()) {
+            return DataTables::of({{__MODEL_NAME__}}::select({{__FIELD_TO_GET__}})->where('deleted', false))
+            	->addIndexColumn()
+            	->addColumn('actions', function($query) {
+            		$actions = '';
+
+            		$actions .= '<a href="/{{__MAIN_ROUTES__}}/show/'.$query->id.'" class="btn btn-sm btn-info"><i class="fa fa-edit"></i></a>&nbsp;';
+            		$actions .= '<a href="/{{__MAIN_ROUTES__}}/delete/'.$query->id.'" class="btn btn-sm btn-danger"><i class="fa fa-trash-o"></i></a>';
+
+            		return $actions;
+            	})
+            	->escapeColumns([])
+            	->make(true);
+		}
+
+		/**
+		 * Open view
+		 * */
+		return view('layouts.app', [
+			'title' => '{{__CONTROLLER_NAME__}} - List',
+			'content' => 'contents.{{__VIEW_PATH__}}.list'
+		]);
+	}
+
+	public function show($id)
+	{
+		$data = {{__MODEL_NAME__}}::where([
+			'id' => $id,
+			'deleted' => false
+		])->first();
+		if(!$data) return redirect()->route('{{__MAIN_ROUTES__}}.list')->with('error', 'Data is not found!');
+
+		return view('layouts.app', [
+			'title' => '{{__CONTROLLER_NAME__}} - Detail',
+			'data' => $data,
+			'content' => 'contents.{{__VIEW_PATH__}}.detail'
+		]);
+	}
+
+	public function create(Request $request)
+	{
+		if($request->isMethod('post')) {
+			/**
+			 * Create new data
+			 * */
+			$data = [
+				'id' => (string) Str::uuid(),
+				{{__DATA_TO_INSERT__}}
+				'created_date' => date('Y-m-d H:i:s')
+			];
+			{{__MODEL_NAME__}}::create($data);
+			return redirect()->route('{{__MAIN_ROUTES__}}.list')->with('success', 'Data is successfully created!');
+		}
+
+		/**
+		 * Open view
+		 * */
+		return view('layouts.app', [
+			'title' => '{{__CONTROLLER_NAME__}} - Create',
+			'content' => 'contents.{{__VIEW_PATH__}}.create'
+		]);
+	}
+
+	public function update(Request $request, $id)
+	{
+		if($request->isMethod('post')) {
+
+			/**
+			 * Update data
+			 * */
+			$data = [
+				'id' => $id,
+				{{__DATA_TO_INSERT__}}
+				'updated_date' => date('Y-m-d H:i:s')
+			];
+			{{__MODEL_NAME__}}::where(['id' => $id])->update($data);
+
+			return redirect()->route('{{__MAIN_ROUTES__}}.list')->with('success', 'Data is successfully updated!');
+		}
+		return redirect()->back();
+	}
+
+	public function delete($id)
+	{
+		$data = {{__MODEL_NAME__}}::where([
+			'id' => $id,
+			'deleted' => false
+		])->first();
+		if(!$data) return redirect()->route('{{__MAIN_ROUTES__}}.list')->with('error', 'Data is not found!');
+
+		/**
+		 * Update deleted as true
+		 * */
+		{{__MODEL_NAME__}}::where('id', $id)->update(['deleted' => true]);
+		return redirect()->route('{{__MAIN_ROUTES__}}.list')->with('success', 'Data is successfully deleted!');
+
+	}
+
+}
