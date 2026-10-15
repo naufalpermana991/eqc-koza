@@ -107,7 +107,7 @@ class ValidationHistory extends Controller
 		$_explode_name = explode('.',$_file_name);
 		$_file_pdf = $_explode_name[0].'.pdf';
 
-		$sofficePath = '"C:\Program Files\LibreOffice\program\soffice.exe"';
+		$sofficePath = '"D:\Instalan Software\LibreOffice\Data\program\soffice.exe"';
 		$inputFilePath = '"'.str_replace('/','\\',$request->link).'"';
 		$outputDirectory = '"'.public_path('assets\inspection').'"';
 		$command = "$sofficePath --headless --convert-to pdf --outdir $outputDirectory $inputFilePath";
