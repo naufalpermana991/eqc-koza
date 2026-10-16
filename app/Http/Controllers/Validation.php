@@ -386,7 +386,7 @@ class Validation extends Controller
 							exit();
 						} else {
 							$spreadsheet = IOFactory::load($_path);
-							$sheet = $spreadsheet->getSheet('MC KOZA');
+							$sheet = $spreadsheet->getSheetByName('MC KOZA');
 
 							$imagePath = public_path($file_ttd);
 
